@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$USER_HOME$/go/src/github.com/kserve/kserve/.idea/kfserving.iml" filepath="$USER_HOME$/go/src/github.com/kserve/kserve/.idea/kfserving.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/kserve-tutorial.iml" filepath="$PROJECT_DIR$/.idea/kserve-tutorial.iml" />
+    </modules>
+  </component>
+</project>

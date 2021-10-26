@@ -1,0 +1,170 @@
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "flower-sample"
+spec:
+  predictor:
+    tensorflow:
+      storageUri: "gs://kserve/models/flowers"
+---
+
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "mnist"
+spec:
+  predictor:
+    logger:
+      mode: all
+    tensorflow:
+      storageUri: "gs://kserve/models/mnist"
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: "torchserve"
+spec:
+  transformer:
+    logger:
+      mode: all
+    containers:
+    - image: kserve/torchserve-image-transformer:latest
+      name: kfserving-container
+      env:
+        - name: STORAGE_URI
+          value: gs://kfserving-examples/models/torchserve/image_classifier
+  predictor:
+    logger:
+      mode: all
+    pytorch:
+      storageUri: gs://kfserving-examples/models/torchserve/image_classifier
+
+---
+
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "income"
+spec:
+  predictor:
+    logger:
+      mode: all
+    sklearn:
+      storageUri: "gs://seldon-models/sklearn/income/model"
+  explainer:
+    logger:
+      mode: all
+      url: http://broker-ingress.knative-eventing.svc.cluster.local/default/default
+    alibi:
+      type: AnchorTabular
+      storageUri: "gs://seldon-models/sklearn/income/explainer-py37-0.6.0"
+---
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  labels:
+    controller-tools.k8s.io: "1.0"
+  name: german-credit
+spec:
+  predictor:
+    containerConcurrency: 0
+    containers:
+    - image: aipipeline/aifserver:predictor
+      name: kfserving-container
+    logger:
+      mode: all
+  explainer:
+    logger:
+      mode: all
+    containers:
+    - name: explainer
+      image: aipipeline/aifserver:latest
+      command:
+      - python
+      - -m
+      - aifserver
+      - --predictor_host
+      - german-credit-predictor-default.default.svc.cluster.local
+      - --model_name
+      - german-credit
+      - --feature_names
+      - age
+      - sex
+      - credit_history=Delay
+      - credit_history=None/Paid
+      - credit_history=Other
+      - savings=500+
+      - savings=<500
+      - savings=Unknown/None
+      - employment=1-4 years
+      - employment=4+ years
+      - employment=unemployed
+      - --label_names
+      - credit
+      - --favorable_label
+      - "1"
+      - --unfavorable_label
+      - "2"
+      - --privileged_groups
+      - '{"age": 1}'
+      - --unprivileged_groups
+      - '{"age": 0}'
+      imagePullPolicy: Always
+---
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "artserver"
+spec:
+  predictor:
+    logger:
+      mode: all
+    containers:
+    - name: predictor
+      image: aipipeline/art-server:mnist-predictor
+      imagePullPolicy: Always
+  explainer:
+    logger:
+      mode: all
+    art:
+      type: SquareAttack
+      config:
+        nb_classes: "10"
+---
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "sklearn-driver-transformer"
+spec:
+  transformer:
+    logger:
+      mode: all
+    containers:
+    - image: chinhuang007/driver-transformer:latest
+      resources:
+        requests:
+          memory: "100Mi"
+          cpu: "100m"
+        limits:
+          memory: "200Mi"
+          cpu: "200m"
+      name: driver-container
+      command:
+      - "python"
+      - "-m"
+      - "driver_transformer"
+      args:
+      - --feast_serving_url
+      - feast:6566
+      - --entity_ids
+      - driver_id
+      - --feature_refs
+      - driver_hourly_stats:acc_rate
+      - driver_hourly_stats:avg_daily_trips
+      - driver_hourly_stats:conv_rate
+  predictor:
+    logger:
+      mode: all
+    sklearn:
+      storageUri: "gs://pv-kfserving/driver"
+

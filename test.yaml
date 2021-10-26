@@ -1,0 +1,11 @@
+
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "mnist"
+spec:
+  predictor:
+    logger:
+      mode: all
+    tensorflow:
+      storageUri: "gs://kserve/models/mnist"

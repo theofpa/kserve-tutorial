@@ -1,0 +1,80 @@
+### Tensorflow on tensorflow serving
+POST http://localhost:8501/v1/models/model:predict
+Content-Type: application/json
+
+< ./mnist.json
+
+### Tensorflow serving metrics
+GET http://localhost:8501/monitoring/prometheus/metrics
+
+### Tensorflow on Kserve
+POST http://localhost:8080/v1/models/flower-sample:predict
+Content-Type: application/json
+Host: flower-sample.default.example.com
+
+< /Users/theofpa/go/src/github.com/kserve/kserve/docs/samples/v1beta1/tensorflow/input.json
+
+### Tensorflow custom model
+POST http://localhost:8080/v1/models/mnist:predict
+Content-Type: application/json
+Host: mnist.default.example.com
+
+< ./mnist.json
+
+### TorchServe
+POST http://localhost:8080/v1/models/mnist:predict
+Content-Type: application/json
+Host: torchserve.default.example.com
+
+< ./torch_mnist_digit2.json
+
+### TorchServe
+POST http://localhost:8080/v1/models/mnist:predict
+Content-Type: application/json
+Host: torchserve.default.example.com
+
+< ./torch_mnist_digit7.json
+
+### Explainer Alibi - income
+POST http://localhost:8080/v1/models/income:explain
+Content-Type: application/json
+Host: income.default.example.com
+
+{"instances":[[39, 7, 1, 1, 1, 1, 4, 1, 2174, 0, 40, 9]]}
+
+###
+#age: continuous.
+#workclass: Private, Self-emp-not-inc, Self-emp-inc, Federal-gov, Local-gov, State-gov, Without-pay, Never-worked.
+#fnlwgt: continuous.
+#education: Bachelors, Some-college, 11th, HS-grad, Prof-school, Assoc-acdm, Assoc-voc, 9th, 7th-8th, 12th, Masters, 1st-4th, 10th, Doctorate, 5th-6th, Preschool.
+#education-num: continuous.
+#marital-status: Married-civ-spouse, Divorced, Never-married, Separated, Widowed, Married-spouse-absent, Married-AF-spouse.
+#occupation: Tech-support, Craft-repair, Other-service, Sales, Exec-managerial, Prof-specialty, Handlers-cleaners, Machine-op-inspct, Adm-clerical, Farming-fishing, Transport-moving, Priv-house-serv, Protective-serv, Armed-Forces.
+#relationship: Wife, Own-child, Husband, Not-in-family, Other-relative, Unmarried.
+#race: White, Asian-Pac-Islander, Amer-Indian-Eskimo, Other, Black.
+#sex: Female, Male.
+#capital-gain: continuous.
+#capital-loss: continuous.
+#hours-per-week: continuous.
+#native-country: United-States, Cambodia, England, Puerto-Rico, Canada, Germany, Outlying-US(Guam-USVI-etc), India, Japan, Greece, South, China, Cuba, Iran, Honduras, Philippines, Italy, Poland, Jamaica, Vietnam, Mexico, Portugal, Ireland, France, Dominican-Republic, Laos, Ecuador, Taiwan, Haiti, Columbia, Hungary, Guatemala, Nicaragua, Scotland, Thailand, Yugoslavia, El-Salvador, Trinadad&Tobago, Peru, Hong, Holand-Netherlands.
+
+### Fairness AIF360 - German credit
+POST http://localhost:8080/v1/models/german-credit:explain
+Content-Type: application/json
+Host: german-credit.default.example.com
+
+< /Users/theofpa/go/src/github.com/kserve/kserve/docs/samples/explanation/aif/germancredit/input.json
+
+### Adversarial - ART - mnist
+POST http://localhost:8080/v1/models/artserver:explain
+Content-Type: application/json
+Host: artserver.default.example.com
+
+< /Users/theofpa/go/src/github.com/kserve/kserve/docs/samples/explanation/art/mnist/input.json
+
+### Feast
+POST http://localhost:8080/v1/models/sklearn-driver-transformer:predict
+Content-Type: application/json
+Host: sklearn-driver-transformer.default.example.com
+
+< /Users/theofpa/go/src/github.com/kserve/kserve/docs/samples/v1beta1/transformer/feast/driver-input.json

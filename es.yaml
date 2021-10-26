@@ -1,0 +1,40 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: es
+spec:
+  version: 7.15.1
+  nodeSets:
+  - name: default
+    count: 1
+    podTemplate:
+      spec:
+        containers:
+          - name: elasticsearch
+            env:
+              - name: READINESS_PROBE_PROTOCOL
+                value: "http"
+    config:
+      node.store.allow_mmap: false
+      xpack.security.enabled: false
+      xpack.security.http.ssl.enabled: false
+      xpack.security.transport.ssl.enabled: false
+---
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kb
+spec:
+  version: 7.15.1
+  count: 1
+  http:
+    service:
+      spec:
+        type: NodePort
+        ports:
+          - port: 5601
+            nodePort: 32608
+            name: https
+  config:
+    elasticsearch.hosts:
+      - http://es-es-http:9200

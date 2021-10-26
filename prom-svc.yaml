@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    operated-prometheus: "true"
+  name: prometheus
+  namespace: kfserving-monitoring
+spec:
+  ports:
+  - name: http
+    port: 9090
+    nodePort: 32610
+  selector:
+    app: prometheus
+  type: NodePort
